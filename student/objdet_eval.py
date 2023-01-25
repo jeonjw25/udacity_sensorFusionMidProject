@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import torch
 from shapely.geometry import Polygon
 from operator import itemgetter
-
+from misc.objdet_tools import compute_box_corners
 # add project directory to python path to enable relative imports
 import os
 import sys
@@ -38,6 +38,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
     true_positives = 0 # no. of correctly detected objects
     center_devs = []
     ious = []
+                                               
     for label, valid in zip(labels, labels_valid):
         matches_lab_det = []
         if valid: # exclude all labels from statistics which are not considered valid
@@ -49,20 +50,33 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             print("student task ID_S4_EX1 ")
 
             ## step 1 : extract the four corners of the current label bounding-box
+            gt_cx, gt_cy, gt_cz = label.box.center_x, label.box.center_y, label.box.center_z
+            gt_w, gt_l, gt_yaw = label.box.width, label.box.length, label.box.heading
+            gt_corners = compute_box_corners(gt_cx, gt_cy, gt_w, gt_l, gt_yaw)
             
             ## step 2 : loop over all detected objects
-
+            for detection in detections:
                 ## step 3 : extract the four corners of the current detection
-                
+                x, y, z = np.array(detection[1]), np.array(detection[2]), np.array(detection[3]) 
+                w, l, yaw = np.array(detection[5]), np.array(detection[6]), np.array(detection[7])
+                detected_corners = compute_box_corners(x, y, w, l, yaw)
                 ## step 4 : computer the center distance between label and detection bounding-box in x, y, and z
-                
+                dist_x = gt_cx - x
+                dist_y = gt_cy - y
+                dist_z = gt_cz - z
                 ## step 5 : compute the intersection over union (IOU) between label and detection bounding-box
-                
+                gt_bbox = Polygon(gt_corners)
+                detected_bbox = Polygon(detected_corners)
+                intersection = gt_bbox.intersection(detected_bbox).area
+                union = gt_bbox.union(detected_bbox).area
+                iou = intersection / union
                 ## step 6 : if IOU exceeds min_iou threshold, store [iou,dist_x, dist_y, dist_z] in matches_lab_det and increase the TP count
-                
+                if iou > min_iou:
+                    matches_lab_det.append([iou, dist_x, dist_y, dist_z])
+                    true_positives += 1
             #######
             ####### ID_S4_EX1 END #######     
-            
+            print("matches_lab_det: {}" .format(matches_lab_det))
         # find best match and compute metrics
         if matches_lab_det:
             best_match = max(matches_lab_det,key=itemgetter(1)) # retrieve entry with max iou in case of multiple candidates   
@@ -77,14 +91,14 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
     # compute positives and negatives for precision/recall
     
     ## step 1 : compute the total number of positives present in the scene
-    all_positives = 0
-
+    all_positives = labels_valid.sum()
+    
     ## step 2 : compute the number of false negatives
-    false_negatives = 0
+    false_negatives = all_positives - true_positives
 
     ## step 3 : compute the number of false positives
-    false_positives = 0
-    
+    false_positives = len(detections) -true_positives  
+
     #######
     ####### ID_S4_EX2 END #######     
     
@@ -95,7 +109,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
 
 
 # evaluate object detection performance based on all frames
-def compute_performance_stats(det_performance_all):
+def compute_performance_stats(det_performance_all, configs_det):
 
     # extract elements
     ious = []
@@ -109,14 +123,18 @@ def compute_performance_stats(det_performance_all):
     ####### ID_S4_EX3 START #######     
     #######    
     print('student task ID_S4_EX3')
-
+    np_posNegs = np.array(pos_negs)
     ## step 1 : extract the total number of positives, true positives, false negatives and false positives
-    
+    total_positives = np_posNegs[:,0].sum()
+    total_tp = np_posNegs[:,1].sum()
+    total_fn = np_posNegs[:,2].sum()
+    total_fp = np_posNegs[:,3].sum()
+
     ## step 2 : compute precision
-    precision = 0.0
+    precision = total_tp / (total_tp + total_fp)
 
     ## step 3 : compute recall 
-    recall = 0.0
+    recall = total_tp / total_positives
 
     #######    
     ####### ID_S4_EX3 END #######     

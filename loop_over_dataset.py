@@ -62,7 +62,7 @@ datafile = WaymoDataFileReader(data_fullpath)
 datafile_iter = iter(datafile)  # initialize dataset iterator
 
 ## Initialize object detection
-configs_det = det.load_configs(model_name='fpn_resnet') # options are 'darknet', 'fpn_resnet'
+configs_det = det.load_configs(model_name='darknet') # options are 'darknet', 'fpn_resnet'
 model_det = det.create_model(configs_det)
 
 configs_det.use_labels_as_objects = False # True = use groundtruth labels as objects, False = use model-based detection
@@ -79,10 +79,10 @@ camera = None # init camera sensor object
 np.random.seed(10) # make random values predictable
 
 ## Selective execution and visualization
-exec_data = ['pcl_from_rangeimage', 'load_image']
-exec_detection = ['bev_from_pcl', 'detect_objects', 'validate_object_labels'] # options are 'bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'; options not in the list will be loaded from file
+exec_data = ['pcl_from_rangeimage']
+exec_detection = ['bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'] # options are 'bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'; options not in the list will be loaded from file
 exec_tracking = [] # options are 'perform_tracking'
-exec_visualization = ['show_objects_in_bev_labels_in_camera', ] # options are 'show_range_image', 'show_bev', 'show_pcl', 'show_labels_in_image', 'show_objects_and_labels_in_bev', 'show_objects_in_bev_labels_in_camera', 'show_tracks', 'show_detection_performance', 'make_tracking_movie'
+exec_visualization = ['show_detection_performance'] # options are 'show_range_image', 'show_bev', 'show_pcl', 'show_labels_in_image', 'show_objects_and_labels_in_bev', 'show_objects_in_bev_labels_in_camera', 'show_tracks', 'show_detection_performance', 'make_tracking_movie'
 exec_list = make_exec_list(exec_detection, exec_tracking, exec_visualization)
 vis_pause_time = 0 # set pause time between frames in ms (0 = stop between frames until key is pressed)
 
@@ -137,6 +137,7 @@ while True:
             print('computing point-cloud from lidar range image')
             lidar_pcl = tools.pcl_from_range_image(frame, lidar_name)
             # if(configs_det.save_results == True):
+            print(lidar_pcl.shape)
         else:
             print('loading lidar point-cloud from result file')
             lidar_pcl = load_object_from_file(results_fullpath, data_filename, 'lidar_pcl', cnt_frame)
@@ -144,7 +145,9 @@ while True:
         ## Compute lidar birds-eye view (bev)
         if 'bev_from_pcl' in exec_list:
             print('computing birds-eye view from lidar pointcloud')
+            
             lidar_bev = pcl.bev_from_pcl(lidar_pcl, configs_det)
+            # print(lidar_bev.shape)
         else:
             print('loading birds-eve view from result file')
             lidar_bev = load_object_from_file(results_fullpath, data_filename, 'lidar_bev', cnt_frame)
@@ -155,7 +158,7 @@ while True:
             detections = tools.convert_labels_into_objects(frame.laser_labels, configs_det)
         else:
             if 'detect_objects' in exec_list:
-                print('detecting objects in lidar pointcloud')   
+                print('detecting objects in lidar pointcloud') 
                 detections = det.detect_objects(lidar_bev, model_det, configs_det)
             else:
                 print('loading detected objects from result file')
@@ -173,19 +176,19 @@ while True:
             print('loading object labels and validation from result file')
             valid_label_flags = load_object_from_file(results_fullpath, data_filename, 'valid_labels', cnt_frame)            
 
-        # ## Performance evaluation for object detection
-        # if 'measure_detection_performance' in exec_list:
-        #     print('measuring detection performance')
-        #     det_performance = eval.measure_detection_performance(detections, frame.laser_labels, valid_label_flags, configs_det.min_iou)     
-        # else:
-        #     print('loading detection performance measures from file')
-        #     # load different data for final project vs. mid-term project
-        #     if 'perform_tracking' in exec_list:
-        #         det_performance = load_object_from_file(results_fullpath, data_filename, 'det_performance', cnt_frame)
-        #     else:
-        #         det_performance = load_object_from_file(results_fullpath, data_filename, 'det_performance_' + configs_det.arch + '_' + str(configs_det.conf_thresh), cnt_frame)   
+        ## Performance evaluation for object detection
+        if 'measure_detection_performance' in exec_list:
+            print('measuring detection performance')
+            det_performance = eval.measure_detection_performance(detections, frame.laser_labels, valid_label_flags, configs_det.min_iou)     
+        else:
+            print('loading detection performance measures from file')
+            # load different data for final project vs. mid-term project
+            if 'perform_tracking' in exec_list:
+                det_performance = load_object_from_file(results_fullpath, data_filename, 'det_performance', cnt_frame)
+            else:
+                det_performance = load_object_from_file(results_fullpath, data_filename, 'det_performance_' + configs_det.arch + '_' + str(configs_det.conf_thresh), cnt_frame)   
 
-        # det_performance_all.append(det_performance) # store all evaluation results in a list for performance assessment at the end
+        det_performance_all.append(det_performance) # store all evaluation results in a list for performance assessment at the end
         
 
         ## Visualization for object detection

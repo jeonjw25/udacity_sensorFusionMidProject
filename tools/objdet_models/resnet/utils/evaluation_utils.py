@@ -118,19 +118,19 @@ def post_processing(detections, configs):
     ret = []
     for i in range(detections.shape[0]):
         top_preds = {}
-        classes = detections[i, :, -1]
+        classes = detections[i, :, -1] #which classes
         for j in range(configs.num_classes):
             inds = (classes == j)
             # x, y, z, h, w, l, yaw
             top_preds[j] = np.concatenate([
-                detections[i, inds, 0:1],
-                detections[i, inds, 1:2] * configs.down_ratio,
-                detections[i, inds, 2:3] * configs.down_ratio,
-                detections[i, inds, 3:4],
-                detections[i, inds, 4:5],
-                detections[i, inds, 5:6] / (configs.lim_y[1]-configs.lim_y[0]) * configs.bev_width,
-                detections[i, inds, 6:7] / (configs.lim_x[1]-configs.lim_x[0]) * configs.bev_height,
-                get_yaw(detections[i, inds, 7:9]).astype(np.float32)], axis=1)
+                detections[i, inds, 0:1], # scores
+                detections[i, inds, 1:2] * configs.down_ratio, # x
+                detections[i, inds, 2:3] * configs.down_ratio, # y
+                detections[i, inds, 3:4], # z
+                detections[i, inds, 4:5], # h
+                detections[i, inds, 5:6] / (configs.lim_y[1]-configs.lim_y[0]) * configs.bev_width, # w
+                detections[i, inds, 6:7] / (configs.lim_x[1]-configs.lim_x[0]) * configs.bev_height, # l
+                get_yaw(detections[i, inds, 7:9]).astype(np.float32)], axis=1) # yaw
             # Filter by conf_thresh
             if len(top_preds[j]) > 0:
                 keep_inds = (top_preds[j][:, 0] > configs.conf_thresh)

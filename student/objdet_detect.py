@@ -58,7 +58,8 @@ def load_configs_model(model_name='darknet', configs=None):
         configs.num_workers = 4
         configs.pin_memory = True
         configs.use_giou_loss = False
-        configs.save_results = False
+        configs.min_iou = 0.5
+        #configs.save_results = False
 
     elif model_name == 'fpn_resnet':   
         ####### ID_S3_EX1-3 START #######     
@@ -102,7 +103,7 @@ def load_configs_model(model_name='darknet', configs=None):
         raise ValueError("Error: Invalid model name")
 
     # GPU vs. CPU
-    configs.no_cuda = False # if true, cuda is not used
+    configs.no_cuda = True # if true, cuda is not used
     configs.gpu_idx = 0  # GPU index to use.
     configs.device = torch.device('cpu' if configs.no_cuda else 'cuda:{}'.format(configs.gpu_idx))
 
@@ -201,16 +202,25 @@ def detect_objects(input_bev_maps, model, configs):
             ####### ID_S3_EX1-5 START #######     
             #######
             print("student task ID_S3_EX1-5")
-            # print(outputs)
+            # print(outputs['z_coor'].shape)
+            # print(outputs['dim'].shape)
+
             outputs['hm_cen'] = _sigmoid(outputs['hm_cen'])
             outputs['cen_offset'] = _sigmoid(outputs['cen_offset'])
+            # outputs['direction'] = _sigmoid(outputs['direction'])
+            # outputs['z_coor'] = _sigmoid(outputs['z_coor'])
+            # outputs['dim'] = _sigmoid(outputs['dim'])
             # detections size (batch_size, K, 10)
+
             detections = decode(outputs['hm_cen'], outputs['cen_offset'], outputs['direction'], outputs['z_coor'],
-                                outputs['dim'], K=40) #K=configs.k
+                                outputs['dim']) #K=configs.k
             detections = detections.cpu().numpy().astype(np.float32)
-            # print(detections)
+            print(detections.shape)
             detections = post_processing(detections, configs)
-            detections = detections[0][1]
+            # np_detections = np.array(detections)
+            # print(np_detections.shape)
+            # print(detections)
+            detections = detections[0][1] # only extract cls_num: 1
             # print(detections)
             #######
             ####### ID_S3_EX1-5 END #######     
@@ -230,7 +240,7 @@ def detect_objects(input_bev_maps, model, configs):
             ## step 3 : perform the conversion using the limits for x, y and z set in the configs structure
             id, bev_x, bev_y, z, h, bev_w, bev_l, yaw = obj
             x = bev_y / configs.bev_height * (configs.lim_x[1] - configs.lim_x[0])
-            y = bev_x / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) - (configs.lim_y[1] - configs.lim_y[0])/2.0 
+            y = bev_x / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) - (configs.lim_y[1] - configs.lim_y[0]) / 2
             w = bev_w / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) 
             l = bev_l / configs.bev_height * (configs.lim_x[1] - configs.lim_x[0])
             ## step 4 : append the current object to the 'objects' array
