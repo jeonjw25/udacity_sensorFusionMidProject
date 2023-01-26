@@ -47,8 +47,7 @@ class Sensor:
         # TODO Step 4: implement a function that returns True if x lies in the sensor's field of view, 
         # otherwise False.
         ############
-
-        return True
+        pass
         
         ############
         # END student code
@@ -72,7 +71,6 @@ class Sensor:
             ############
 
             pass
-        
             ############
             # END student code
             ############ 
