@@ -129,5 +129,49 @@ Parts of this project are based on the following repositories:
 - [Complex-YOLO: Real-time 3D Object Detection on Point Clouds](https://github.com/maudzung/Complex-YOLOv4-Pytorch)
 
 
+<br><br>
+
+# Project Report
+## ID_S1_EX1
+![new_range_img](https://user-images.githubusercontent.com/54730375/214840361-ac49de9c-9138-42f4-b5c6-664266a21db2.png)
+
+## ID_S1_EX2
+In /img folder
+
+<br>
+
+## ID_S2_EX1
+![image](https://user-images.githubusercontent.com/54730375/214846138-e8f7c784-5488-4a36-93fd-ccc0b38224c6.png)
+
+<br>
+
+## ID_S2_EX2
+
+![Intensitymap](https://user-images.githubusercontent.com/54730375/214846292-a7c82c09-f4e8-4f09-a679-518784772a22.png)
+
+
+![intensitymap_zoom](https://user-images.githubusercontent.com/54730375/214846317-c41c6b64-9e6a-4ee0-a7b0-f9f2e712d01b.png)
+
+<br>
+
+## ID_S2_EX3
+
+![height_map](https://user-images.githubusercontent.com/54730375/214846289-ce4a703f-618a-4326-9daf-b8a6ce1b59fd.png)
+
+![height_map_zoom](https://user-images.githubusercontent.com/54730375/214846327-c14a665d-583d-4ac9-8550-28076c2a25e0.png)
+
+## ID_S3
+
+![label_detectedObjimage](https://user-images.githubusercontent.com/54730375/214847049-b791ae98-cc2e-4572-b41e-b53da0c2b4fb.png)
+
+<br>
+
+## ID_S4
+
+![image](https://user-images.githubusercontent.com/54730375/214849466-484f9f13-d03a-49e5-8360-5b4b40ddcc81.png)
+
+
+<br><br>
+
 ## License
 [License](LICENSE.md)
