@@ -33,6 +33,7 @@ class Filter:
         ############
         # TODO Step 1: implement and return system matrix F
         ############
+       
         dt = self.dt
         
         return np.matrix([[1, 0, 0, dt, 0, 0],
@@ -50,6 +51,7 @@ class Filter:
         ############
         # TODO Step 1: implement and return process noise covariance Q
         ############
+        
         dt = self.dt
         q = self.q
         q2 = (dt**2)/2 * q
@@ -85,13 +87,15 @@ class Filter:
         ############
         # TODO Step 1: update state x and covariance P with associated measurement, save x and P in track
         ############
-        H = meas.Sensor.get_H(track.x)
-        gamma = self.gamma(track, meas)
-        S = self.S(track, meas, H)
-        K = track.P * H.transpose() * np.linalg.inv(S)
-        x = x + K * gamma
-        I = np.identitiy(self.dim_state)
-        P = (I - K*H) * P
+        H = meas.sensor.get_H(track.x)
+        gamma = self.gamma(track, meas) # residual
+        S = self.S(track, meas, H) # covariance of residual
+        K = track.P * H.transpose() * S.I # kalman gain
+        x = track.x + K * gamma # state update
+        I = np.identity(self.dim_state)
+        P = (I - K*H) * track.P # covariance update
+        track.set_x(x)
+        track.set_P(P)
         ############
         # END student code
         ############ 
@@ -101,7 +105,7 @@ class Filter:
         ############
         # TODO Step 1: calculate and return residual gamma
         ############
-        gamma = meas.z - meas.Sensor.get_hx(track.x)
+        gamma = meas.z - meas.sensor.get_hx(track.x)
         return gamma
         
         ############

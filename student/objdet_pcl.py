@@ -114,9 +114,9 @@ def show_range_image(frame, lidar_name):
     deg90 = int(_img_result.shape[1] / 4)
     ri_center = int(_img_result.shape[1]/2)
     img_result = _img_result[:,ri_center-deg90:ri_center+deg90]
-    cv2.imshow('range_image', img_result)
-    cv2.waitKey(0)
-    img_range_intensity = [] # remove after implementing all steps
+    # cv2.imshow('range_image', img_result)
+    # cv2.waitKey(0)
+    # img_range_intensity = [] # remove after implementing all steps
     #######
     ####### ID_S1_EX1 END #######     
     
