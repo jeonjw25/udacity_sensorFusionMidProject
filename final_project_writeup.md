@@ -114,3 +114,8 @@ Please use this starter template to answer the following questions:
 - It seems that we can apply other algorithms than Mahalobis distance to association matrices.
 
 - It seems that the performance can be improved by adjusting the gating threshold.
+
+<br><br>
+
+### 5. Tracking video
+https://www.youtube.com/watch?v=Qfd4Hk17SJ8
