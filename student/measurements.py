@@ -86,13 +86,19 @@ class Sensor:
             x, y, z = pos_sens[0:3]
 
             # - project from camera to image coordinates
-            try:  
-                u = self.c_i - self.f_i * y/x
-                v = self.c_j - self.f_j * z/x
-            except ZeroDivisionError:
-                u = self.c_i - self.f_i * y / 0.01
-                v = self.c_j - self.f_j * z / 0.01
-            return np.array([u, v])
+            if x <= 0:
+                return np.array([-100, -100])
+            else:
+                try:  
+                    u = self.c_i - self.f_i * y/x
+                    v = self.c_j - self.f_j * z/x
+                except ZeroDivisionError:
+                    u = self.c_i - self.f_i * y / 0.01
+                    v = self.c_j - self.f_j * z / 0.01
+                return np.matrix(np.array([u, v]).reshape(-1, 1))
+                
+            
+           
             ############
             # END student code
             ############ 
@@ -180,7 +186,7 @@ class Measurement:
             self.z[1] = z[1]
             self.length = z[3]
             self.width = z[2]
-            
+
             sigma_cam_i = params.sigma_cam_i # measurement noise standard deviation for image i coordinate
             sigma_cam_j = params.sigma_cam_j # measurement noise standard deviation for image j coordinate
             
