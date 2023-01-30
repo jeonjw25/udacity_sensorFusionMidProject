@@ -179,24 +179,33 @@ In /img folder
 
 ![step1_rmse2](https://user-images.githubusercontent.com/54730375/215388218-8a52fe0c-bd9f-4a28-8a9a-c162a65282d5.png)
 
+<br> 
+
 ## step2
 ![step2_delete](https://user-images.githubusercontent.com/54730375/215388262-77db80ec-e149-4782-8b34-38d12d393116.png)
 
 ![step2_bash](https://user-images.githubusercontent.com/54730375/215388264-addf5a07-3fa3-41c1-8578-59520897d837.png)
+![tracking075](https://user-images.githubusercontent.com/54730375/215389985-36a89d9e-ead3-45ae-a35c-4f1b73c5cbf5.png)
 
 ![step2_rmse](https://user-images.githubusercontent.com/54730375/215388266-2160207c-ade1-4a1e-bd01-027d951a5213.png)
+
+<br> 
+
 
 ## step3
 ![step3_plot](https://user-images.githubusercontent.com/54730375/215388309-fea22164-d7e0-4254-90bf-89eeab58d5c7.png)
 
 ![step3_rmse](https://user-images.githubusercontent.com/54730375/215388311-0a13259b-b8e2-4e6a-9466-5911e3c1f823.png)
 
+<br> 
+
 ## step4
 ![step4_rmse](https://user-images.githubusercontent.com/54730375/215388346-dfe7f57a-c88a-49dd-8ab3-fcd6db9ce91d.png)
 
 ![step4_plot](https://user-images.githubusercontent.com/54730375/215388348-4b1dded5-e352-410b-b331-b97516bd586d.png)
 
-### saved track image in /results
+
+## saved track image in /results
 
 
 
