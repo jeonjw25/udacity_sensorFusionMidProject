@@ -133,7 +133,7 @@ def bev_from_pcl(lidar_pcl, configs):
     lidar_pcl = lidar_pcl[mask] # [x, y, z, intensity] * 148457
     
     # shift level of ground plane to avoid flipping from 0 to 255 for neighboring pixels
-    lidar_pcl[:, 2] = lidar_pcl[:, 2] - configs.lim_z[0] # 
+    lidar_pcl[:, 2] = lidar_pcl[:, 2] - configs.lim_z[0] 
 
     # convert sensor coordinates to bev-map coordinates (center is bottom-middle)
     ####### ID_S2_EX1 START #######     

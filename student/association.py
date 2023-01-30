@@ -53,7 +53,7 @@ class Association:
         for i, track in enumerate(track_list):
             for j, meas in enumerate(meas_list):
                 MHD = self.MHD(track, meas, KF)
-                self.association_matrix[i,j] = MHD if self.gating(MHD, meas_list[j].sensor).any() else np.inf
+                self.association_matrix[i,j] = MHD if self.gating(MHD, meas_list[j].sensor) else np.inf
             
 
         self.unassigned_tracks = list(range(len(track_list)))
@@ -77,7 +77,7 @@ class Association:
         
 
         A = self.association_matrix
-        
+
         if np.min(A) == np.inf:
             return np.nan, np.nan
 
